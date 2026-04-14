@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Search Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <div class="top-bar">
+        <span>👤 {{ session.get('user') }}</span>
+
+        <div class="top-actions">
+            <a href="/history" class="action-btn history">History</a>
+            <button class="action-btn" onclick="toggleTheme()">Theme</button>
+            <a href="/logout" class="action-btn logout">Logout</a>
+        </div>
+    </div>
+
+    <div class="mode-indicator">
+        Current Mode: <strong>{{ mode|upper }}</strong>
+    </div>
+
+    <div class="page-wrapper">
+
+        <h1 class="page-title">
+            Results for <span>"{{ query }}"</span>
+        </h1>
+
+        <!-- ================= MATH ================= -->
+        {% if math_result is not none %}
+        <div class="answer-card math">
+            <div class="answer-header">Math / Formula Result</div>
+
+            <div style="max-height:150px; overflow-y:auto; border:1px solid var(--border-color); padding:10px;">
+                <ul class="formula-list">
+                    {% for line in math_result.split('\n') %}
+                        <li>{{ line }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ================= FALLBACK ================= -->
+        {% if fallback_msg %}
+        <div class="answer-card">
+            <div class="answer-header">Suggestion</div>
+            <div class="answer-body">
+                {{ fallback_msg }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ================= AI ================= -->
+        {% if ai_answer is not none %}
+        <div class="answer-card ai">
+            <div class="answer-header">AI Answer</div>
+            <div class="answer-body">
+                {{ ai_answer if ai_answer else "AI engine unavailable." }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ================= SEARCH RESULTS ================= -->
+        {% if results is not none %}
+            {% if results|length > 0 %}
+            <div class="results-list">
+                {% for r in results %}
+                <div class="result-card">
+                    <h3>{{ r["title"] }}</h3>
+                    <p>{{ r["content"] }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endif %}
+
+        <!-- ================= NO RESULTS ================= -->
+        {% if results is none and math_result is none and ai_answer is none %}
+        <div class="card" style="text-align: center; color: var(--text-muted);">
+            <p>No results found.</p>
+        </div>
+        {% endif %}
+
+        <a href="/" style="display: inline-block; margin-top: 2rem;">&larr; Back to Search</a>
+
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const theme = document.documentElement.getAttribute("data-theme");
+            const newTheme = theme === "dark" ? "light" : "dark";
+            document.documentElement.setAttribute("data-theme", newTheme);
+            localStorage.setItem("theme", newTheme);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const saved = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", saved);
+        });
+    </script>
+
+</body>
+
+</html>

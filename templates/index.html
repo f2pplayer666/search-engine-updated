@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Mini Search Engine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <div class="top-bar">
+        <span>👤 {{ session['user'] }}</span>
+
+        <form action="/toggle_mode" method="post" class="mode-toggle">
+            <span class="mode-label">Offline</span>
+        <label class="switch">
+        
+        <input type="checkbox" onchange="this.form.submit()"
+               {% if session.get('mode') == 'online' %}
+                    checked
+               {% endif %}>
+        <span class="slider"></span>
+        </label>
+        <span class="mode-label">Online</span>
+        </form>
+
+
+        <div class="top-actions">
+            <a href="/history" class="action-btn history">History</a>
+            <button class="action-btn" onclick="toggleTheme()" id="theme-btn">Theme</button>
+            <a href="/logout" class="action-btn logout">Logout</a>
+        </div>
+    </div>
+
+    <form action="/toggle_mode" method="POST" style="display:inline;">
+        <button class="mode-btn">
+            Mode: {{ session.get("mode", "offline").upper() }}
+        </button>
+    </form>
+
+
+    <div class="search-container">
+        <h1>Mini Search Engine</h1>
+
+        <form action="/search" method="POST" class="search-box">
+            <input type="text" name="query" placeholder="Search here..." value="{{ query if query is defined else '' }}"
+                required autofocus>
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <a href="/history" style="display: none;"></a>
+
+    <button class="voice-btn" onclick="startVoice()">🎙</button>
+    <button class="stop-btn" onclick="forceStop()">⛔</button>
+
+    <div id="voice-output" class="voice-output hidden"></div>
+
+   <script>
+let recognition;
+let synth = window.speechSynthesis;
+
+// =====================
+// THEME FIX (IMPORTANT)
+// =====================
+function toggleTheme() {
+    const current = document.documentElement.getAttribute("data-theme");
+    const newTheme = current === "dark" ? "light" : "dark";
+
+    document.documentElement.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+}
+
+// APPLY SAVED THEME ON LOAD
+document.addEventListener("DOMContentLoaded", () => {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+});
+
+// =====================
+// VOICE SYSTEM
+// =====================
+function startVoice() {
+    if (!('webkitSpeechRecognition' in window)) {
+        alert("Use Google Chrome");
+        return;
+    }
+
+    recognition = new webkitSpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onresult = function (event) {
+        const text = event.results[0][0].transcript.trim();
+        showText("You: " + text);
+        askAI(text);
+    };
+
+    recognition.onerror = function (e) {
+        console.error("Voice Error:", e);
+    };
+
+    recognition.start();
+}
+
+function askAI(text) {
+    fetch("/voice_ai", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ query: text })
+    })
+    .then(res => res.json())
+    .then(data => {
+        showText("AI: " + data.answer);
+        speak(data.answer);
+    })
+    .catch(err => {
+        console.error("Fetch error:", err);
+        showText("Error connecting to AI");
+    });
+}
+
+function speak(text) {
+    stopSpeaking();
+    let utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-US";
+    synth.speak(utterance);
+}
+
+function stopSpeaking() {
+    if (synth.speaking) {
+        synth.cancel();
+    }
+}
+
+function forceStop() {
+    if (recognition) recognition.stop();
+    stopSpeaking();
+    showText("Stopped.");
+}
+
+function showText(text) {
+    const box = document.getElementById("voice-output");
+    box.classList.remove("hidden");
+    box.innerText = text;
+}
+</script>
+
+</body>
+
+</html>
