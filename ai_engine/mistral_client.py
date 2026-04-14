@@ -1,14 +1,14 @@
-from groq import Groq
 import os
+from groq import Groq
+
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def ask_ai(prompt):
     try:
-        client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-
         response = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[
-                {"role": "system", "content": "Explain clearly with steps and examples."},
+                {"role": "system", "content": "Explain clearly in detail with steps and examples."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.7
@@ -23,4 +23,4 @@ def ask_ai(prompt):
 
     except Exception as e:
         print("AI ERROR:", e)
-        return None
+        return "AI engine unavailable."
