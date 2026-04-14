@@ -10,7 +10,7 @@
 <body>
 
     <div class="top-bar">
-        <span>👤 {{ session.get('user') }}</span>
+        <span>👤 {{ session['user'] }}</span>
 
         <form action="/toggle_mode" method="post" class="mode-toggle">
             <span class="mode-label">Offline</span>
@@ -25,6 +25,7 @@
         <span class="mode-label">Online</span>
         </form>
 
+
         <div class="top-actions">
             <a href="/history" class="action-btn history">History</a>
             <button class="action-btn" onclick="toggleTheme()" id="theme-btn">Theme</button>
@@ -37,6 +38,7 @@
             Mode: {{ session.get("mode", "offline").upper() }}
         </button>
     </form>
+
 
     <div class="search-container">
         <h1>Mini Search Engine</h1>
@@ -59,18 +61,26 @@
 let recognition;
 let synth = window.speechSynthesis;
 
+// =====================
+// THEME FIX (IMPORTANT)
+// =====================
 function toggleTheme() {
     const current = document.documentElement.getAttribute("data-theme");
     const newTheme = current === "dark" ? "light" : "dark";
+
     document.documentElement.setAttribute("data-theme", newTheme);
     localStorage.setItem("theme", newTheme);
 }
 
+// APPLY SAVED THEME ON LOAD
 document.addEventListener("DOMContentLoaded", () => {
     const savedTheme = localStorage.getItem("theme") || "light";
     document.documentElement.setAttribute("data-theme", savedTheme);
 });
 
+// =====================
+// VOICE SYSTEM
+// =====================
 function startVoice() {
     if (!('webkitSpeechRecognition' in window)) {
         alert("Use Google Chrome");
@@ -141,4 +151,5 @@ function showText(text) {
 </script>
 
 </body>
+
 </html>

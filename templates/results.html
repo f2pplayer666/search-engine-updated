@@ -29,6 +29,7 @@
             Results for <span>"{{ query }}"</span>
         </h1>
 
+        <!-- ================= MATH ================= -->
         {% if math_result is not none %}
         <div class="answer-card math">
             <div class="answer-header">Math / Formula Result</div>
@@ -43,6 +44,7 @@
         </div>
         {% endif %}
 
+        <!-- ================= FALLBACK ================= -->
         {% if fallback_msg %}
         <div class="answer-card">
             <div class="answer-header">Suggestion</div>
@@ -52,6 +54,7 @@
         </div>
         {% endif %}
 
+        <!-- ================= AI ================= -->
         {% if ai_answer is not none %}
         <div class="answer-card ai">
             <div class="answer-header">AI Answer</div>
@@ -61,18 +64,22 @@
         </div>
         {% endif %}
 
-        {% if results %}
-        <div class="results-list">
-            {% for r in results %}
-            <div class="result-card">
-                <h3>{{ r["title"] }}</h3>
-                <p>{{ r["content"] }}</p>
+        <!-- ================= SEARCH RESULTS ================= -->
+        {% if results is not none %}
+            {% if results|length > 0 %}
+            <div class="results-list">
+                {% for r in results %}
+                <div class="result-card">
+                    <h3>{{ r["title"] }}</h3>
+                    <p>{{ r["content"] }}</p>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
+            {% endif %}
         {% endif %}
 
-        {% if not results and not math_result and not ai_answer %}
+        <!-- ================= NO RESULTS ================= -->
+        {% if results is none and math_result is none and ai_answer is none %}
         <div class="card" style="text-align: center; color: var(--text-muted);">
             <p>No results found.</p>
         </div>
@@ -97,4 +104,5 @@
     </script>
 
 </body>
+
 </html>
