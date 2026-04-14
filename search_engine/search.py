@@ -3,7 +3,15 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 data = pd.read_csv("study_knowledge_base.csv")
-data["combined"] = data["title"] + " " + data["summary"]
+
+# ✅ combine ALL useful columns
+data["combined"] = (
+    data["title"] + " " +
+    data["definition"] + " " +
+    data["explanation"] + " " +
+    data["details"] + " " +
+    data["keywords"]
+)
 
 vectorizer = TfidfVectorizer(stop_words="english")
 tfidf_matrix = vectorizer.fit_transform(data["combined"])
@@ -14,18 +22,27 @@ def ranked_search(query):
     scores = cosine_similarity(query_vec, tfidf_matrix).flatten()
     best_index = scores.argmax()
 
-    title = data.iloc[best_index]["title"]
-    content = data.iloc[best_index]["summary"]
+    row = data.iloc[best_index]
 
+    title = row["title"]
+
+    # ✅ FULL DETAILED OUTPUT
     detailed = f"""
-{content}
+Definition:
+{row['definition']}
 
 Explanation:
-{content}
+{row['explanation']}
+
+Details:
+{row['details']}
+
+Example:
+{row['example']}
 
 Key Points:
 - {title} is an important concept
-- It is widely used in studies
+- It is widely used in academics
 
 Conclusion:
 This topic helps in understanding {title}.
