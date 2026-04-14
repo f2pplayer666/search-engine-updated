@@ -204,7 +204,6 @@ Machine learning is transforming industries.",
 "Example: Spam email detection",
 "machine learning ai data"
 
-title,definition,explanation,details,example,keywords
 Data Structures,"Data Structures are ways of organizing and storing data efficiently.","Data structures are fundamental concepts in computer science that allow efficient storage organization and retrieval of data. They are essential for writing optimized algorithms and improving performance of applications. Different data structures are used depending on the requirement such as fast access insertion deletion or memory efficiency. Understanding data structures is crucial for solving complex computational problems.",
 "FEATURES:
 - Efficient data organization
@@ -396,7 +395,6 @@ Cloud computing is transforming IT infrastructure.",
 "Example: Google Drive storage",
 "cloud computing storage internet"
 
-title,definition,explanation,details,example,keywords
 Artificial Intelligence,"Artificial Intelligence is the simulation of human intelligence in machines.","Artificial Intelligence enables machines to mimic human behavior such as learning reasoning and decision making. It is one of the most advanced fields in computer science and is widely used in automation robotics and data analysis. AI systems can process large amounts of data and make intelligent decisions based on patterns and logic.",
 "FEATURES:
 - Learning capability
@@ -589,7 +587,6 @@ Data mining helps in extracting valuable insights from data.",
 "Example: Customer buying patterns",
 "data mining analytics"
 
-title,definition,explanation,details,example,keywords
 Database,"Database is an organized collection of structured data.","A database is used to store manage and retrieve data efficiently. It allows users to access data in a structured format and supports multiple operations like insertion deletion and updating of records. Databases are essential for modern applications such as banking systems social media platforms and enterprise software.",
 "FEATURES:
 - Structured data storage
